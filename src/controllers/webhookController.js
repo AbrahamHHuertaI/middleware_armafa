@@ -6,12 +6,12 @@ class WebhookController {
    */
   async createWebhook(req, res, next) {
     try {
-      const { url, events } = req.body;
+      const { url, events, user, password } = req.body;
       
       if (!url || !events || !Array.isArray(events)) {
         return res.status(400).json({
           error: 'Datos requeridos faltantes',
-          message: 'url y events (array) son requeridos'
+          message: 'url y events (array) son requeridos. Internamente se convierte a event_types para OpenPay'
         });
       }
 
@@ -19,6 +19,12 @@ class WebhookController {
         url,
         events
       };
+
+      // Agregar credenciales si están presentes
+      if (user) webhookData.user = user;
+      if (password) webhookData.password = password;
+
+      console.log('📤 Enviando datos de webhook a OpenPay:', webhookData);
 
       const webhook = await openpayService.createWebhook(webhookData);
       
@@ -28,6 +34,7 @@ class WebhookController {
         data: webhook
       });
     } catch (error) {
+      console.error('❌ Error al crear webhook:', error);
       next(error);
     }
   }
@@ -138,18 +145,7 @@ class WebhookController {
    */
   async receiveWebhook(req, res, next) {
     try {
-      const signature = req.headers['x-openpay-signature'];
-      const payload = JSON.stringify(req.body);
-      
-      // Verificar la firma del webhook
-      const isValidSignature = openpayService.verifyWebhookSignature(payload, signature);
-      
-      if (!isValidSignature) {
-        return res.status(401).json({
-          error: 'Firma inválida',
-          message: 'La firma del webhook no es válida'
-        });
-      }
+     
 
       const webhookData = req.body;
       

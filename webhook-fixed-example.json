@@ -1,0 +1,14 @@
+{
+  "url": "https://qa-middleware.dkvzeq.easypanel.host/api/webhooks/receive",
+  "user": "webhook_user",
+  "password": "webhook_password",
+  "event_types": [
+    "charge.succeeded",
+    "charge.failed",
+    "charge.cancelled",
+    "charge.refunded",
+    "payout.created",
+    "payout.succeeded",
+    "payout.failed"
+  ]
+}

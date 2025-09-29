@@ -76,7 +76,12 @@ const validateCreateWebhook = (req, res, next) => {
         'order.completed',
         'order.expired',
         'order.cancelled',
-        'order.payment.cancelled'
+        'order.payment.cancelled',
+        'subscription.created',
+        'subscription.updated',
+        'subscription.cancelled',
+        'subscription.succeeded',
+        'subscription.failed'
       )
     ).min(1).required()
   });
@@ -126,7 +131,12 @@ const validateUpdateWebhook = (req, res, next) => {
         'order.completed',
         'order.expired',
         'order.cancelled',
-        'order.payment.cancelled'
+        'order.payment.cancelled',
+        'subscription.created',
+        'subscription.updated',
+        'subscription.cancelled',
+        'subscription.succeeded',
+        'subscription.failed'
       )
     ).min(1).optional()
   });
