@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  openpay-middleware:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - OPENPAY_MERCHANT_ID=${OPENPAY_MERCHANT_ID}
+      - OPENPAY_PRIVATE_KEY=${OPENPAY_PRIVATE_KEY}
+      - OPENPAY_PUBLIC_KEY=${OPENPAY_PUBLIC_KEY}
+      - OPENPAY_PRODUCTION=${OPENPAY_PRODUCTION:-false}
+    volumes:
+      - ./logs:/app/logs
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s

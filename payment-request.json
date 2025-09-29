@@ -1,0 +1,14 @@
+{
+    "amount": 50,
+    "description": "Compra en línea",
+    "currency": "MXN",
+    "order_id": "ORD-12345",
+    "redirect_url": "https://armafa.com/Usuario/GetTransaction",
+    "send_email": "true",
+    "customer": {
+      "name": "Juan",
+      "last_name": "Pérez",
+      "phone_number": "5551234567",
+      "email": "juan.perez@ejemplo.com"
+    }
+}
