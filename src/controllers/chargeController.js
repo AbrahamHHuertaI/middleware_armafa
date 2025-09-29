@@ -107,7 +107,7 @@ class ChargeController {
           last_name: customer.last_name
         } : null
       };
-      
+      console.log('chargeResponse', chargeResponse);
       // Reenviar cargo a Directus
       await this.forwardChargeToDirectus(chargeResponse);
       
