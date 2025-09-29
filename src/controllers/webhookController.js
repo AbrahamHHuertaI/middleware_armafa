@@ -249,7 +249,6 @@ class WebhookController {
    * Manejar cargo exitoso
    */
   async handleChargeSucceeded(data, webhookData) {
-    console.log('✅ Cargo exitoso:', data.id);
     console.log('📋 Webhook completo:', JSON.stringify(webhookData, null, 2));
     // Aquí puedes agregar lógica específica para cargos exitosos
     // Por ejemplo: actualizar base de datos, enviar email de confirmación, etc.
@@ -259,7 +258,6 @@ class WebhookController {
    * Manejar cargo fallido
    */
   async handleChargeFailed(data, webhookData) {
-    console.log('❌ Cargo fallido:', data.id);
     console.log('📋 Webhook completo:', JSON.stringify(webhookData, null, 2));
     // Aquí puedes agregar lógica específica para cargos fallidos
     // Por ejemplo: notificar al usuario, registrar en logs, etc.
@@ -269,7 +267,6 @@ class WebhookController {
    * Manejar cargo cancelado
    */
   async handleChargeCancelled(data, webhookData) {
-    console.log('🚫 Cargo cancelado:', data.id);
     console.log('📋 Webhook completo:', JSON.stringify(webhookData, null, 2));
     // Aquí puedes agregar lógica específica para cargos cancelados
   }
@@ -278,7 +275,6 @@ class WebhookController {
    * Manejar cargo reembolsado
    */
   async handleChargeRefunded(data, webhookData) {
-    console.log('💰 Cargo reembolsado:', data.id);
     console.log('📋 Webhook completo:', JSON.stringify(webhookData, null, 2));
     // Aquí puedes agregar lógica específica para reembolsos
   }
@@ -287,7 +283,6 @@ class WebhookController {
    * Manejar payout creado
    */
   async handlePayoutCreated(data, webhookData) {
-    console.log('📤 Payout creado:', data.id);
     console.log('📋 Webhook completo:', JSON.stringify(webhookData, null, 2));
     // Aquí puedes agregar lógica específica para payouts creados
   }
@@ -296,7 +291,6 @@ class WebhookController {
    * Manejar payout exitoso
    */
   async handlePayoutSucceeded(data, webhookData) {
-    console.log('✅ Payout exitoso:', data.id);
     console.log('📋 Webhook completo:', JSON.stringify(webhookData, null, 2));
     // Aquí puedes agregar lógica específica para payouts exitosos
   }
@@ -305,7 +299,6 @@ class WebhookController {
    * Manejar payout fallido
    */
   async handlePayoutFailed(data, webhookData) {
-    console.log('❌ Payout fallido:', data.id);
     console.log('📋 Webhook completo:', JSON.stringify(webhookData, null, 2));
     // Aquí puedes agregar lógica específica para payouts fallidos
   }
