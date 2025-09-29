@@ -297,4 +297,26 @@ class WebhookController {
   }
 }
 
-module.exports = new WebhookController();
+// Crear instancia y bindear métodos para mantener el contexto
+const webhookController = new WebhookController();
+
+// Bindear todos los métodos para mantener el contexto de 'this'
+const boundController = {
+  createWebhook: webhookController.createWebhook.bind(webhookController),
+  getActiveWebhooks: webhookController.getActiveWebhooks.bind(webhookController),
+  getWebhook: webhookController.getWebhook.bind(webhookController),
+  updateWebhook: webhookController.updateWebhook.bind(webhookController),
+  deleteWebhook: webhookController.deleteWebhook.bind(webhookController),
+  receiveWebhook: webhookController.receiveWebhook.bind(webhookController),
+  processWebhook: webhookController.processWebhook.bind(webhookController),
+  handleChargeSucceeded: webhookController.handleChargeSucceeded.bind(webhookController),
+  handleChargeFailed: webhookController.handleChargeFailed.bind(webhookController),
+  handleChargeCancelled: webhookController.handleChargeCancelled.bind(webhookController),
+  handleChargeRefunded: webhookController.handleChargeRefunded.bind(webhookController),
+  handlePayoutCreated: webhookController.handlePayoutCreated.bind(webhookController),
+  handlePayoutSucceeded: webhookController.handlePayoutSucceeded.bind(webhookController),
+  handlePayoutFailed: webhookController.handlePayoutFailed.bind(webhookController),
+  getWebhookEventTypes: webhookController.getWebhookEventTypes.bind(webhookController)
+};
+
+module.exports = boundController;
