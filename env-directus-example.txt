@@ -1,0 +1,12 @@
+# Variables de entorno para el reenvío de webhooks a Directus
+# Agrega estas variables a tu archivo .env
+
+# URL del webhook de Directus donde se reenviarán todos los webhooks
+WEBHOOK_DIRECTUS=https://tu-directus-instance.com/webhooks/openpay
+
+# Token de autenticación para Directus (Bearer token)
+WEBHOOK_TOKEN=tu_token_de_directus_aqui
+
+# Ejemplo de configuración completa:
+# WEBHOOK_DIRECTUS=https://cms.armafa.com/webhooks/openpay
+# WEBHOOK_TOKEN=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...

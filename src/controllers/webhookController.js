@@ -1,6 +1,40 @@
 const openpayService = require('../services/openpayService');
+const axios = require('axios');
 
 class WebhookController {
+  /**
+   * Reenviar webhook a Directus
+   * @param {Object} webhookData - Datos completos del webhook
+   */
+  async forwardToDirectus(webhookData) {
+    try {
+      const directusUrl = process.env.WEBHOOK_DIRECTUS;
+      const webhookToken = process.env.WEBHOOK_TOKEN;
+      
+      if (!directusUrl || !webhookToken) {
+        console.warn('⚠️ Variables de entorno WEBHOOK_DIRECTUS o WEBHOOK_TOKEN no configuradas');
+        return;
+      }
+      
+      console.log('🔄 Reenviando webhook a Directus:', directusUrl);
+      
+      const response = await axios.post(directusUrl, webhookData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${webhookToken}`
+        },
+        timeout: 30000
+      });
+      
+      console.log('✅ Webhook reenviado exitosamente a Directus:', response.status);
+      return response.data;
+      
+    } catch (error) {
+      console.error('❌ Error al reenviar webhook a Directus:', error.response?.data || error.message);
+      // No lanzamos el error para que el webhook principal continúe funcionando
+    }
+  }
+
   /**
    * Crear un nuevo webhook
    */
@@ -177,27 +211,30 @@ class WebhookController {
     try {
       const { type, data } = webhookData;
       
+      // Reenviar el webhook completo a Directus
+      await this.forwardToDirectus(webhookData);
+      
       switch (type) {
         case 'charge.succeeded':
-          await this.handleChargeSucceeded(data);
+          await this.handleChargeSucceeded(data, webhookData);
           break;
         case 'charge.failed':
-          await this.handleChargeFailed(data);
+          await this.handleChargeFailed(data, webhookData);
           break;
         case 'charge.cancelled':
-          await this.handleChargeCancelled(data);
+          await this.handleChargeCancelled(data, webhookData);
           break;
         case 'charge.refunded':
-          await this.handleChargeRefunded(data);
+          await this.handleChargeRefunded(data, webhookData);
           break;
         case 'payout.created':
-          await this.handlePayoutCreated(data);
+          await this.handlePayoutCreated(data, webhookData);
           break;
         case 'payout.succeeded':
-          await this.handlePayoutSucceeded(data);
+          await this.handlePayoutSucceeded(data, webhookData);
           break;
         case 'payout.failed':
-          await this.handlePayoutFailed(data);
+          await this.handlePayoutFailed(data, webhookData);
           break;
         default:
           console.log(`Tipo de webhook no manejado: ${type}`);
@@ -211,8 +248,9 @@ class WebhookController {
   /**
    * Manejar cargo exitoso
    */
-  async handleChargeSucceeded(data) {
+  async handleChargeSucceeded(data, webhookData) {
     console.log('✅ Cargo exitoso:', data.id);
+    console.log('📋 Webhook completo:', JSON.stringify(webhookData, null, 2));
     // Aquí puedes agregar lógica específica para cargos exitosos
     // Por ejemplo: actualizar base de datos, enviar email de confirmación, etc.
   }
@@ -220,8 +258,9 @@ class WebhookController {
   /**
    * Manejar cargo fallido
    */
-  async handleChargeFailed(data) {
+  async handleChargeFailed(data, webhookData) {
     console.log('❌ Cargo fallido:', data.id);
+    console.log('📋 Webhook completo:', JSON.stringify(webhookData, null, 2));
     // Aquí puedes agregar lógica específica para cargos fallidos
     // Por ejemplo: notificar al usuario, registrar en logs, etc.
   }
@@ -229,40 +268,45 @@ class WebhookController {
   /**
    * Manejar cargo cancelado
    */
-  async handleChargeCancelled(data) {
+  async handleChargeCancelled(data, webhookData) {
     console.log('🚫 Cargo cancelado:', data.id);
+    console.log('📋 Webhook completo:', JSON.stringify(webhookData, null, 2));
     // Aquí puedes agregar lógica específica para cargos cancelados
   }
 
   /**
    * Manejar cargo reembolsado
    */
-  async handleChargeRefunded(data) {
+  async handleChargeRefunded(data, webhookData) {
     console.log('💰 Cargo reembolsado:', data.id);
+    console.log('📋 Webhook completo:', JSON.stringify(webhookData, null, 2));
     // Aquí puedes agregar lógica específica para reembolsos
   }
 
   /**
    * Manejar payout creado
    */
-  async handlePayoutCreated(data) {
+  async handlePayoutCreated(data, webhookData) {
     console.log('📤 Payout creado:', data.id);
+    console.log('📋 Webhook completo:', JSON.stringify(webhookData, null, 2));
     // Aquí puedes agregar lógica específica para payouts creados
   }
 
   /**
    * Manejar payout exitoso
    */
-  async handlePayoutSucceeded(data) {
+  async handlePayoutSucceeded(data, webhookData) {
     console.log('✅ Payout exitoso:', data.id);
+    console.log('📋 Webhook completo:', JSON.stringify(webhookData, null, 2));
     // Aquí puedes agregar lógica específica para payouts exitosos
   }
 
   /**
    * Manejar payout fallido
    */
-  async handlePayoutFailed(data) {
+  async handlePayoutFailed(data, webhookData) {
     console.log('❌ Payout fallido:', data.id);
+    console.log('📋 Webhook completo:', JSON.stringify(webhookData, null, 2));
     // Aquí puedes agregar lógica específica para payouts fallidos
   }
 
@@ -309,6 +353,7 @@ const boundController = {
   deleteWebhook: webhookController.deleteWebhook.bind(webhookController),
   receiveWebhook: webhookController.receiveWebhook.bind(webhookController),
   processWebhook: webhookController.processWebhook.bind(webhookController),
+  forwardToDirectus: webhookController.forwardToDirectus.bind(webhookController),
   handleChargeSucceeded: webhookController.handleChargeSucceeded.bind(webhookController),
   handleChargeFailed: webhookController.handleChargeFailed.bind(webhookController),
   handleChargeCancelled: webhookController.handleChargeCancelled.bind(webhookController),
