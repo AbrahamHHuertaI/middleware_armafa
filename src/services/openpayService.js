@@ -8,6 +8,14 @@ class OpenPayService {
       process.env.OPENPAY_PRIVATE_KEY,
       process.env.OPENPAY_PRODUCTION === 'true'
     );
+    
+    // Verificar métodos disponibles para debugging
+    console.log('🔧 Métodos disponibles en OpenPay SDK:', Object.keys(this.openpay));
+    if (this.openpay.checkouts) {
+      console.log('✅ Métodos de checkouts disponibles:', Object.keys(this.openpay.checkouts));
+    } else {
+      console.warn('⚠️ this.openpay.checkouts no está disponible');
+    }
   }
 
   /**
@@ -389,22 +397,38 @@ class OpenPayService {
   }
 
   /**
-   * Crear un checkout (link de pago)
+   * Crear un checkout usando API REST
    * @param {Object} checkoutData - Datos del checkout
    * @returns {Promise<Object>} Respuesta del checkout creado
    */
   async createCheckout(checkoutData) {
     try {
-      return new Promise((resolve, reject) => {
-        this.openpay.checkouts.create(checkoutData, (error, checkout) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(checkout);
-          }
-        });
+      console.log('🔄 Usando API REST para crear checkout...');
+      
+      const baseUrl = process.env.OPENPAY_PRODUCTION === 'true' 
+        ? 'https://api.openpay.mx/v1' 
+        : 'https://sandbox-api.openpay.mx/v1';
+      
+      const merchantId = process.env.OPENPAY_MERCHANT_ID;
+      const privateKey = process.env.OPENPAY_PRIVATE_KEY;
+      
+      const url = `${baseUrl}/${merchantId}/checkouts`;
+      
+      console.log('🌐 Enviando petición REST a:', url);
+      
+      const response = await axios.post(url, checkoutData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${Buffer.from(privateKey + ':').toString('base64')}`
+        },
+        timeout: 30000
       });
+      
+      console.log('✅ Checkout creado exitosamente con REST:', response.status);
+      return response.data;
+      
     } catch (error) {
+      console.error('❌ Error de OpenPay REST al crear checkout:', error.response?.data || error.message);
       throw new Error(`Error al crear checkout: ${error.message}`);
     }
   }
@@ -434,49 +458,82 @@ class OpenPayService {
   }
 
   /**
-   * Obtener un checkout por ID
+   * Obtener un checkout por ID usando API REST
    * @param {string} checkoutId - ID del checkout
    * @returns {Promise<Object>} Datos del checkout
    */
   async getCheckout(checkoutId) {
     try {
-      return new Promise((resolve, reject) => {
-        this.openpay.checkouts.get(checkoutId, (error, checkout) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(checkout);
-          }
-        });
+      console.log('🔄 Usando API REST para obtener checkout...');
+      
+      const baseUrl = process.env.OPENPAY_PRODUCTION === 'true' 
+        ? 'https://api.openpay.mx/v1' 
+        : 'https://sandbox-api.openpay.mx/v1';
+      
+      const merchantId = process.env.OPENPAY_MERCHANT_ID;
+      const privateKey = process.env.OPENPAY_PRIVATE_KEY;
+      
+      const url = `${baseUrl}/${merchantId}/checkouts/${checkoutId}`;
+      
+      console.log('🌐 Enviando petición REST a:', url);
+      
+      const response = await axios.get(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${Buffer.from(privateKey + ':').toString('base64')}`
+        },
+        timeout: 30000
       });
+      
+      console.log('✅ Checkout obtenido exitosamente con REST:', response.status);
+      return response.data;
+      
     } catch (error) {
+      console.error('❌ Error de OpenPay REST al obtener checkout:', error.response?.data || error.message);
       throw new Error(`Error al obtener checkout: ${error.message}`);
     }
   }
 
   /**
-   * Listar checkouts con filtros
+   * Listar checkouts con filtros usando API REST
    * @param {Object} filters - Filtros para la búsqueda
    * @returns {Promise<Object>} Lista de checkouts
    */
   async listCheckouts(filters = {}) {
     try {
-      return new Promise((resolve, reject) => {
-        this.openpay.checkouts.list(filters, (error, checkouts) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(checkouts);
-          }
-        });
+      console.log('🔄 Usando API REST para listar checkouts...');
+      
+      const baseUrl = process.env.OPENPAY_PRODUCTION === 'true' 
+        ? 'https://api.openpay.mx/v1' 
+        : 'https://sandbox-api.openpay.mx/v1';
+      
+      const merchantId = process.env.OPENPAY_MERCHANT_ID;
+      const privateKey = process.env.OPENPAY_PRIVATE_KEY;
+      
+      const url = `${baseUrl}/${merchantId}/checkouts`;
+      
+      console.log('🌐 Enviando petición REST a:', url);
+      
+      const response = await axios.get(url, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${Buffer.from(privateKey + ':').toString('base64')}`
+        },
+        params: filters,
+        timeout: 30000
       });
+      
+      console.log('✅ Checkouts obtenidos exitosamente con REST:', response.status);
+      return response.data;
+      
     } catch (error) {
+      console.error('❌ Error de OpenPay REST al listar checkouts:', error.response?.data || error.message);
       throw new Error(`Error al listar checkouts: ${error.message}`);
     }
   }
 
   /**
-   * Actualizar un checkout
+   * Actualizar un checkout usando API REST
    * @param {string} checkoutId - ID del checkout
    * @param {string} status - Nuevo estado del checkout
    * @param {Object} data - Datos adicionales para actualizar
@@ -484,16 +541,37 @@ class OpenPayService {
    */
   async updateCheckout(checkoutId, status, data = {}) {
     try {
-      return new Promise((resolve, reject) => {
-        this.openpay.checkouts.update(checkoutId, status, data, (error, checkout) => {
-          if (error) {
-            reject(error);
-          } else {
-            resolve(checkout);
-          }
-        });
+      console.log('🔄 Usando API REST para actualizar checkout...');
+      
+      const baseUrl = process.env.OPENPAY_PRODUCTION === 'true' 
+        ? 'https://api.openpay.mx/v1' 
+        : 'https://sandbox-api.openpay.mx/v1';
+      
+      const merchantId = process.env.OPENPAY_MERCHANT_ID;
+      const privateKey = process.env.OPENPAY_PRIVATE_KEY;
+      
+      const url = `${baseUrl}/${merchantId}/checkouts/${checkoutId}`;
+      
+      const updateData = {
+        status,
+        ...data
+      };
+      
+      console.log('🌐 Enviando petición REST a:', url);
+      
+      const response = await axios.put(url, updateData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Basic ${Buffer.from(privateKey + ':').toString('base64')}`
+        },
+        timeout: 30000
       });
+      
+      console.log('✅ Checkout actualizado exitosamente con REST:', response.status);
+      return response.data;
+      
     } catch (error) {
+      console.error('❌ Error de OpenPay REST al actualizar checkout:', error.response?.data || error.message);
       throw new Error(`Error al actualizar checkout: ${error.message}`);
     }
   }

@@ -1,6 +1,40 @@
 const openpayService = require('../services/openpayService');
+const axios = require('axios');
 
 class ChargeController {
+  /**
+   * Reenviar cargo a Directus
+   * @param {Object} chargeData - Datos del cargo creado
+   */
+  async forwardChargeToDirectus(chargeData) {
+    try {
+      const directusUrl = process.env.WEBHOOK_CHARGE;
+      const webhookToken = process.env.WEBHOOK_TOKEN;
+      
+      if (!directusUrl || !webhookToken) {
+        console.warn('⚠️ Variables de entorno WEBHOOK_CHARGE o WEBHOOK_TOKEN no configuradas');
+        return;
+      }
+      
+      console.log('🔄 Reenviando cargo a Directus:', directusUrl);
+      
+      const response = await axios.post(directusUrl, chargeData, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${webhookToken}`
+        },
+        timeout: 30000
+      });
+      
+      console.log('✅ Cargo reenviado exitosamente a Directus:', response.status);
+      return response.data;
+      
+    } catch (error) {
+      console.error('❌ Error al reenviar cargo a Directus:', error.response?.data || error.message);
+      // No lanzamos el error para que el cargo principal continúe funcionando
+    }
+  }
+
   /**
    * Crear un nuevo cargo con link de pago
    */
@@ -38,7 +72,7 @@ class ChargeController {
         description: chargeData.description,
         currency: chargeData.currency || 'MXN',
         order_id: chargeData.order_id || `ORD-${Date.now()}`,
-        redirect_url: chargeData.redirect_url || 'https://armafa.com/Usuario/GetTransaction',
+        redirect_url: process.env.WEBHOOK_REDIRECT_URL,
         send_email: chargeData.send_email || false,
         confirm: 'false', // Importante: no confirmar automáticamente para generar link
         use_3d_secure: chargeData.use_3d_secure || true,
@@ -52,7 +86,8 @@ class ChargeController {
       // Generar el link de pago
       const paymentLink = await openpayService.generatePaymentLink(charge.id);
       
-      res.status(201).json({
+      // Preparar datos para reenvío a Directus
+      const chargeResponse = {
         success: true,
         message: 'Cargo creado exitosamente',
         data: {
@@ -71,7 +106,12 @@ class ChargeController {
           name: customer.name,
           last_name: customer.last_name
         } : null
-      });
+      };
+      
+      // Reenviar cargo a Directus
+      await this.forwardChargeToDirectus(chargeResponse);
+      
+      res.status(201).json(chargeResponse);
     } catch (error) {
       next(error);
     }
@@ -172,7 +212,8 @@ class ChargeController {
       // Generar el link de pago
       const paymentLink = await openpayService.generatePaymentLink(charge.id);
       
-      res.status(201).json({
+      // Preparar datos para reenvío a Directus
+      const chargeResponse = {
         success: true,
         message: 'Link de pago creado exitosamente',
         data: {
@@ -192,7 +233,12 @@ class ChargeController {
           name: customer.name,
           last_name: customer.last_name
         } : null
-      });
+      };
+      
+      // Reenviar cargo a Directus
+      await this.forwardChargeToDirectus(chargeResponse);
+      
+      res.status(201).json(chargeResponse);
     } catch (error) {
       next(error);
     }
