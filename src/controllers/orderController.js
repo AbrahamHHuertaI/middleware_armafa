@@ -140,18 +140,23 @@ class OrderController {
 
                 // Buscar productos en el valor
                 const value = body[key];
+                console.log('Valor encontrado para productos:', value);
                 if (value && typeof value === 'object') {
                   const valueKeys = Object.keys(value);
+                  console.log('Claves del valor:', valueKeys);
                   
                   for (const valueKey of valueKeys) {
+                    console.log('Intentando parsear clave:', valueKey);
                     try {
                       const productos = JSON.parse(valueKey);
+                      console.log('Productos parseados:', productos);
                       if (Array.isArray(productos)) {
                         payload.Productos = JSON.stringify(productos);
+                        console.log('Productos asignados al payload:', payload.Productos);
                         break;
                       }
                     } catch (e) {
-                      // Si no se puede parsear, continuar
+                      console.log('Error parseando productos:', e.message);
                     }
                   }
                 }
