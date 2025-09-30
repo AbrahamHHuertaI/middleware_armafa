@@ -59,6 +59,7 @@ class OrderController {
   processOrder = async (req, res, next) => {
     try {
       const payload = req.body;
+      console.log(payload);
 
       // Validar que el payload existe
       if (!payload) {
