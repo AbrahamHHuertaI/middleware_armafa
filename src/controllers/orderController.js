@@ -148,6 +148,7 @@ class OrderController {
                   for (const valueKey of valueKeys) {
                     console.log('Intentando parsear clave:', valueKey);
                     try {
+                      // Intentar parsear directamente
                       const productos = JSON.parse(valueKey);
                       console.log('Productos parseados:', productos);
                       if (Array.isArray(productos)) {
@@ -156,7 +157,20 @@ class OrderController {
                         break;
                       }
                     } catch (e) {
-                      console.log('Error parseando productos:', e.message);
+                      console.log('Error parseando productos directamente:', e.message);
+                      try {
+                        // Si falla, intentar agregar corchetes para formar un array
+                        const productosConCorchetes = `[${valueKey}]`;
+                        const productos = JSON.parse(productosConCorchetes);
+                        console.log('Productos parseados con corchetes:', productos);
+                        if (Array.isArray(productos)) {
+                          payload.Productos = JSON.stringify(productos);
+                          console.log('Productos asignados al payload:', payload.Productos);
+                          break;
+                        }
+                      } catch (e2) {
+                        console.log('Error parseando productos con corchetes:', e2.message);
+                      }
                     }
                   }
                 }
