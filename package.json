@@ -28,6 +28,7 @@
     "helmet": "^7.1.0",
     "joi": "^17.11.0",
     "morgan": "^1.10.0",
+    "nodemailer": "^7.0.6",
     "openpay": "^1.0.0"
   },
   "devDependencies": {

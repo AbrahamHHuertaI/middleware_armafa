@@ -12,6 +12,7 @@ const chargeRoutes = require('./routes/charges');
 const webhookRoutes = require('./routes/webhooks');
 const customerRoutes = require('./routes/customers');
 const checkoutRoutes = require('./routes/checkouts');
+const orderRoutes = require('./routes/orders');
 
 const app = express();
 
@@ -49,6 +50,7 @@ app.use('/api/charges', chargeRoutes);
 app.use('/api/webhooks', webhookRoutes);
 app.use('/api/customers', customerRoutes);
 app.use('/api/checkouts', checkoutRoutes);
+app.use('/api/orders', orderRoutes);
 
 // Middleware de manejo de errores
 app.use(errorHandler);
