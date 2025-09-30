@@ -97,7 +97,71 @@ class OrderController {
             return payload;
           }
         } catch (e) {
-          // Si no se puede parsear la clave, continuar
+          // Si no se puede parsear la clave completa, intentar extraer datos manualmente
+          if (key.includes('"id"') && key.includes('"Usuario"')) {
+            try {
+              // Extraer datos básicos del pedido usando regex
+              const idMatch = key.match(/"id":\s*(\d+)/);
+              const usuarioMatch = key.match(/"Usuario":\s*"([^"]+)"/);
+              const noOrdenMatch = key.match(/"NoOrden":\s*"([^"]+)"/);
+              const totalMatch = key.match(/"Total":\s*"([^"]+)"/);
+              const subtotalMatch = key.match(/"Subtotal":\s*"([^"]+)"/);
+              const ivaMatch = key.match(/"IVA":\s*"([^"]+)"/);
+              const estatusMatch = key.match(/"Estatus":\s*"([^"]+)"/);
+              const nombreMatch = key.match(/"Nombre":\s*"([^"]+)"/);
+              const apellidosMatch = key.match(/"Apellidos":\s*"([^"]+)"/);
+              const emailMatch = key.match(/"Email":\s*"([^"]+)"/);
+              const telefonoMatch = key.match(/"Telefono":\s*"([^"]+)"/);
+              const direccionMatch = key.match(/"Direccion":\s*"([^"]+)"/);
+              const ciudadMatch = key.match(/"Ciudad":\s*"([^"]+)"/);
+              const estadoMatch = key.match(/"Estado":\s*"([^"]+)"/);
+              const codigoPostalMatch = key.match(/"Codigo_Postal":\s*"([^"]+)"/);
+              const referenciasMatch = key.match(/"Referencias":\s*"([^"]*)"/);
+
+              if (idMatch && usuarioMatch) {
+                const payload = {
+                  id: parseInt(idMatch[1]),
+                  Usuario: usuarioMatch[1],
+                  NoOrden: noOrdenMatch ? noOrdenMatch[1] : '',
+                  Total: totalMatch ? totalMatch[1] : '',
+                  Subtotal: subtotalMatch ? subtotalMatch[1] : '',
+                  IVA: ivaMatch ? ivaMatch[1] : '',
+                  Estatus: estatusMatch ? estatusMatch[1] : '',
+                  Nombre: nombreMatch ? nombreMatch[1] : '',
+                  Apellidos: apellidosMatch ? apellidosMatch[1] : '',
+                  Email: emailMatch ? emailMatch[1] : '',
+                  Telefono: telefonoMatch ? telefonoMatch[1] : '',
+                  Direccion: direccionMatch ? direccionMatch[1] : '',
+                  Ciudad: ciudadMatch ? ciudadMatch[1] : '',
+                  Estado: estadoMatch ? estadoMatch[1] : '',
+                  Codigo_Postal: codigoPostalMatch ? codigoPostalMatch[1] : '',
+                  Referencias: referenciasMatch ? referenciasMatch[1] : ''
+                };
+
+                // Buscar productos en el valor
+                const value = body[key];
+                if (value && typeof value === 'object') {
+                  const valueKeys = Object.keys(value);
+                  
+                  for (const valueKey of valueKeys) {
+                    try {
+                      const productos = JSON.parse(valueKey);
+                      if (Array.isArray(productos)) {
+                        payload.Productos = JSON.stringify(productos);
+                        break;
+                      }
+                    } catch (e) {
+                      // Si no se puede parsear, continuar
+                    }
+                  }
+                }
+                
+                return payload;
+              }
+            } catch (regexError) {
+              console.error('Error en extracción con regex:', regexError);
+            }
+          }
         }
       }
 
