@@ -71,9 +71,30 @@ class OrderController {
         try {
           // Intentar parsear la clave como JSON
           const parsedKey = JSON.parse(key);
-          if (parsedKey && typeof parsedKey === 'object') {
-            // Si la clave es un objeto, usar ese objeto como payload
-            return parsedKey;
+          if (parsedKey && typeof parsedKey === 'object' && parsedKey.id) {
+            // Si la clave es un objeto válido con id, usar ese objeto como payload base
+            const payload = { ...parsedKey };
+            
+            // Buscar productos en el valor de la clave
+            const value = body[key];
+            if (value && typeof value === 'object') {
+              const valueKeys = Object.keys(value);
+              
+              // Buscar productos en las claves del valor
+              for (const valueKey of valueKeys) {
+                try {
+                  const productos = JSON.parse(valueKey);
+                  if (Array.isArray(productos)) {
+                    payload.Productos = JSON.stringify(productos);
+                    break;
+                  }
+                } catch (e) {
+                  // Si no se puede parsear, continuar
+                }
+              }
+            }
+            
+            return payload;
           }
         } catch (e) {
           // Si no se puede parsear la clave, continuar
