@@ -70,27 +70,35 @@ El controlador espera que en Directus existan las siguientes colecciones:
 ### Payload de Entrada
 ```json
 {
-  "event": "Carrito.items.create",
-  "payload": {
-    "Usuario": "4f9726da-4499-4c1e-98c8-f5f47be6ba8b",
-    "NoOrden": "ORD-1759174992005-265",
-    "Total": 649.6,
-    "Subtotal": 649.6,
-    "IVA": 649.6,
-    "Estatus": "PendientePago",
-    "Nombre": "comprador2s",
-    "Apellidos": "comprador2",
-    "Email": "comprador2@mailinator.com",
-    "Telefono": "4773804422",
-    "Direccion": "asdasd",
-    "Ciudad": "Jerécuaro",
-    "Estado": "Guanajuato ",
-    "Codigo_Postal": "37420",
-    "Referencias": "",
-    "Productos": "[{\"id\":3,\"nombre\":\"BLOQUES DECORATIVO 3D TIPO HOJAS\",\"cantidad\":1,\"precioUnitario\":649.6,\"total\":649.6}]"
-  },
-  "key": 25,
-  "collection": "Carrito"
+  "id": 25,
+  "Usuario": "4f9726da-4499-4c1e-98c8-f5f47be6ba8b",
+  "NoOrden": "ORD-1759174992005-265",
+  "Total": "649.60000",
+  "Subtotal": "649.60000",
+  "IVA": "649.60000",
+  "IdTransaccion": "trvniv9b2sdpupfepgeb",
+  "Estatus": "Pendiente de pago",
+  "Url_de_pago": "https://sandbox-api.openpay.mx/v1/mrnqcupnxje2fiajbl0b/charges/trvniv9b2sdpupfepgeb/card_capture",
+  "Nombre": "comprador2s",
+  "Apellidos": "comprador2",
+  "Email": "comprador2@mailinator.com",
+  "Telefono": "4773804422",
+  "Direccion": "asdasd",
+  "Ciudad": "Jerécuaro",
+  "Estado": "Guanajuato ",
+  "Codigo_Postal": "37420",
+  "Referencias": "",
+  "Productos": "[{\"id\":3,\"nombre\":\"BLOQUES DECORATIVO 3D TIPO HOJAS\",\"cantidad\":1,\"precioUnitario\":649.6,\"total\":649.6}]",
+  "Numero_De_Contrato": null,
+  "OpenPayTransactionId": null,
+  "OpenPayAuthorizationCode": null,
+  "OpenPayMethod": null,
+  "OpenPayStatus": null,
+  "OpenPayAmount": null,
+  "OpenPayCardType": null,
+  "OpenPayCardBrand": null,
+  "OpenPayCardNumber": null,
+  "OpenPayBankName": null
 }
 ```
 
