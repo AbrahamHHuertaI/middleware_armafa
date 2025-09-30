@@ -155,6 +155,11 @@ class OrderController {
                         payload.Productos = JSON.stringify(productos);
                         console.log('Productos asignados al payload:', payload.Productos);
                         break;
+                      } else if (productos && typeof productos === 'object' && productos.id) {
+                        // Si es un producto individual, convertirlo a array
+                        payload.Productos = JSON.stringify([productos]);
+                        console.log('Producto individual convertido a array:', payload.Productos);
+                        break;
                       }
                     } catch (e) {
                       console.log('Error parseando productos directamente:', e.message);
