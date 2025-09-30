@@ -54,12 +54,64 @@ class OrderController {
   }
 
   /**
+   * Normalizar payload para manejar diferentes formatos de entrada
+   */
+  normalizarPayload(body) {
+    // Caso 1: Body viene como objeto normal
+    if (body && typeof body === 'object' && body.id) {
+      return body;
+    }
+
+    // Caso 2: Body viene como objeto con claves que contienen JSON strings
+    if (body && typeof body === 'object') {
+      const keys = Object.keys(body);
+      
+      // Buscar una clave que contenga un JSON string
+      for (const key of keys) {
+        try {
+          // Intentar parsear la clave como JSON
+          const parsedKey = JSON.parse(key);
+          if (parsedKey && typeof parsedKey === 'object') {
+            // Si la clave es un objeto, usar ese objeto como payload
+            return parsedKey;
+          }
+        } catch (e) {
+          // Si no se puede parsear la clave, continuar
+        }
+      }
+
+      // Si no encontramos una clave parseable, buscar valores que sean objetos
+      for (const key of keys) {
+        const value = body[key];
+        if (value && typeof value === 'object' && value.id) {
+          return value;
+        }
+      }
+    }
+
+    // Caso 3: Body es un string JSON
+    if (typeof body === 'string') {
+      try {
+        return JSON.parse(body);
+      } catch (e) {
+        console.error('Error parseando body como JSON string:', e);
+      }
+    }
+
+    // Si no se puede normalizar, devolver el body original
+    return body;
+  }
+
+  /**
    * Procesar nuevo pedido desde webhook
    */
   processOrder = async (req, res, next) => {
     try {
-      const payload = req.body;
-      console.log(payload);
+      let payload = req.body;
+      console.log('Body recibido:', payload);
+
+      // Manejar diferentes formatos de entrada
+      payload = this.normalizarPayload(payload);
 
       // Validar que el payload existe
       if (!payload) {
@@ -67,6 +119,14 @@ class OrderController {
           error: 'Payload requerido',
           message: 'El payload es obligatorio'
         });
+      }
+
+      console.log('Payload normalizado:', payload);
+
+      // Verificar conexión SMTP antes de procesar
+      const smtpOk = await this.verificarConexionSMTP();
+      if (!smtpOk) {
+        console.warn('⚠️ Advertencia: Conexión SMTP no verificada, pero continuando...');
       }
 
       // 1. Obtener y formatear productos del payload

@@ -73,6 +73,19 @@ async function procesarPedido(payload) {
 }
 
 /**
+ * Función para probar con formato problemático
+ */
+async function probarFormatoProblematico() {
+  const payloadProblematico = {
+    '{\n    "id": 26,\n    "Usuario": "4f9726da-4499-4c1e-98c8-f5f47be6ba8b",\n    "NoOrden": "ORD-1759243942019-646",\n    "Total": "1299.20000",\n    "Subtotal": "1299.20000",\n    "IVA": "1299.20000",\n    "IdTransaccion": "tr96gosfohu8fwn5l86z",\n    "Estatus": "Pagado",\n    "Url_de_pago": "https://sandbox-api.openpay.mx/v1/mrnqcupnxje2fiajbl0b/charges/tr96gosfohu8fwn5l86z/card_capture",\n    "Nombre": "comprador2s",\n    "Apellidos": "comprador2",\n    "Email": "comprador2@mailinator.com",\n    "Telefono": "4773804422",\n    "Direccion": "asdasd",\n    "Ciudad": "Jerécuaro",\n    "Estado": "Guanajuato ",\n    "Codigo_Postal": "37420",\n    "Referencias": "",\n    "Productos": "': {
+      '{"id":1,"nombre":"BLOQUES DECORATIVO 3D TIPO TRIANGULO","cantidad":1,"precioUnitario":649.6,"total":649.6},{"id":3,"nombre":"BLOQUES DECORATIVO 3D TIPO HOJAS","cantidad":1,"precioUnitario":649.6,"total":649.6}': ''
+    }
+  };
+
+  return await procesarPedido(payloadProblematico);
+}
+
+/**
  * Función para probar con múltiples productos
  */
 async function probarConMultiplesProductos() {
@@ -144,5 +157,6 @@ if (require.main === module) {
 module.exports = {
   procesarPedido,
   probarConMultiplesProductos,
+  probarFormatoProblematico,
   ejemploPayload
 };
